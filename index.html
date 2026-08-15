@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud Student Management System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header class="topbar">
+    <div class="brand">
+        <div class="logo">☁</div>
+        <div>
+            <h1>Cloud Student</h1>
+            <span>Management System</span>
+        </div>
+    </div>
+    <div class="status"><span></span> System Online</div>
+</header>
+
+<main class="container">
+    <section class="hero">
+        <div>
+            <p class="eyebrow">CLOUD APPLICATION</p>
+            <h2>Student Management Dashboard</h2>
+            <p class="hero-text">Manage student records from a simple, responsive web application.</p>
+        </div>
+        <a class="health" href="/health" target="_blank">✓ Check System Health</a>
+    </section>
+
+    <section class="stats">
+        <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div><small>Total Students</small><strong>{{ total }}</strong></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">🎓</div>
+            <div><small>Courses</small><strong>{{ courses }}</strong></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">☁</div>
+            <div><small>Deployment</small><strong>AWS Ready</strong></div>
+        </div>
+    </section>
+
+    <section class="grid">
+        <div class="card form-card">
+            <div class="card-title">
+                <div>
+                    <p class="eyebrow">REGISTRATION</p>
+                    <h3>Add New Student</h3>
+                </div>
+                <div class="round">+</div>
+            </div>
+            <form method="POST" action="/add">
+                <label>Student Name</label>
+                <input name="name" placeholder="Enter full name" required>
+
+                <label>USN / Student ID</label>
+                <input name="usn" placeholder="e.g. 01MTECH001" required>
+
+                <label>Course</label>
+                <input name="course" placeholder="e.g. M.Tech Data Science" required>
+
+                <label>Email Address</label>
+                <input name="email" type="email" placeholder="student@example.com" required>
+
+                <button class="primary" type="submit">Add Student <span>→</span></button>
+            </form>
+        </div>
+
+        <div class="card records-card">
+            <div class="card-title records-head">
+                <div>
+                    <p class="eyebrow">DATABASE</p>
+                    <h3>Student Records</h3>
+                </div>
+                <input id="search" class="search" placeholder="Search student..." onkeyup="filterTable()">
+            </div>
+
+            <div class="table-wrap">
+                <table id="studentTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Student</th>
+                            <th>USN</th>
+                            <th>Course</th>
+                            <th>Email</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for s in students %}
+                        <tr>
+                            <td><span class="id-badge">{{ s['id'] }}</span></td>
+                            <td><strong>{{ s['name'] }}</strong></td>
+                            <td>{{ s['usn'] }}</td>
+                            <td><span class="course">{{ s['course'] }}</span></td>
+                            <td>{{ s['email'] }}</td>
+                            <td>
+                                <form method="POST" action="/delete/{{ s['id'] }}" onsubmit="return confirm('Delete this student?')">
+                                    <button class="delete" type="submit">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="6" class="empty">No students added yet. Use the form to create your first record.</td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <span>Cloud Student Management System</span>
+        <span>Python • Flask • SQLite • AWS EC2</span>
+    </footer>
+</main>
+
+<script>
+function filterTable() {
+    const input = document.getElementById("search").value.toLowerCase();
+    const rows = document.querySelectorAll("#studentTable tbody tr");
+    rows.forEach(row => {
+        row.style.display = row.innerText.toLowerCase().includes(input) ? "" : "none";
+    });
+}
+</script>
+</body>
+</html>
